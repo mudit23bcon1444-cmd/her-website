@@ -94,7 +94,7 @@ const CONFIG = {
   volume: 0.7,
 
   /** Object position for photos to keep faces nicely framed. */
-  objectPosition: 'center 30%',
+  objectPosition: 'center 25%',
 };
 
 /* ──────────────────────────────────────────────────────────
