@@ -545,20 +545,20 @@ function createFilmSegment() {
   const segment = document.createElement('div');
   segment.className = 'segment';
 
-  // Left sprocket holes (17 holes)
+  // Left sprocket holes (22 holes)
   const holesLeft = document.createElement('div');
   holesLeft.className = 'holes left';
-  for (let i = 0; i < 17; i++) {
+  for (let i = 0; i < 22; i++) {
     const hole = document.createElement('div');
     hole.className = 'hole';
     holesLeft.appendChild(hole);
   }
   segment.appendChild(holesLeft);
 
-  // Right sprocket holes (17 holes)
+  // Right sprocket holes (22 holes)
   const holesRight = document.createElement('div');
   holesRight.className = 'holes right';
-  for (let i = 0; i < 17; i++) {
+  for (let i = 0; i < 22; i++) {
     const hole = document.createElement('div');
     hole.className = 'hole';
     holesRight.appendChild(hole);
@@ -567,7 +567,7 @@ function createFilmSegment() {
 
   // Edge print labels: repeating labels "2A", "3", "3A", "4" next to windows
   const edgeLabels = ['▶ 2A', '3', '▶ 3A', '4'];
-  const edgeTops   = [0.2925, 0.8775, 1.4625, 2.0475];
+  const edgeTops   = [0.3825, 1.1475, 1.9125, 2.6775];
 
   for (let i = 0; i < 4; i++) {
     const markL = document.createElement('div');
@@ -608,12 +608,12 @@ function buildFilmstrip() {
 
   document.documentElement.style.setProperty(
     '--object-position',
-    CONFIG.objectPosition || 'center 30%'
+    CONFIG.objectPosition || 'center 25%'
   );
 
   // Measure or estimate segment height to ensure at least 2.5x viewport coverage
   const stripW = reelRotate.offsetWidth || 380;
-  const segHeightEst = stripW * 2.34;
+  const segHeightEst = stripW * 3.06;
   const numSegments = Math.max(4, Math.ceil((window.innerHeight * 2.5) / segHeightEst) + 1);
 
   for (let s = 0; s < numSegments; s++) {

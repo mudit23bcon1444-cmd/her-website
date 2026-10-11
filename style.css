@@ -383,14 +383,14 @@ html, body {
 }
 
 /* ── Single Film Segment (4 photo frames per segment) ──
-   Height: calc(var(--w) * 2.34)
+   Height: calc(var(--w) * 3.06)
    Padding-top & bottom: calc(var(--w) * 0.0325)
    Body: continuous with ZERO gap between stacked segments
 */
 .segment {
   position: relative;
   width: var(--w);
-  height: calc(var(--w) * 2.34);
+  height: calc(var(--w) * 3.06);
   background-color: #2a2321;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
   padding-top: calc(var(--w) * 0.0325);
@@ -405,7 +405,7 @@ html, body {
 
 /* ── Sprocket Holes ──
    Two columns, absolute, height 100%, flex column space-around
-   17 holes per column, opaque off-white #f3eee4
+   22 holes per column, opaque off-white #f3eee4
 */
 .holes {
   position: absolute;
@@ -463,8 +463,7 @@ html, body {
 }
 
 /* ── Photo Frames ──
-   Wider image box: width calc(var(--w) * 0.74)
-   Height: calc(var(--w) * 0.52)
+   Wider & taller image box: width calc(var(--w) * 0.74), height calc(var(--w) * 0.70)
    Left offset: calc(var(--w) * 0.13)
    Border-radius: calc(var(--w) * 0.014)
 */
@@ -473,7 +472,7 @@ html, body {
   overflow: hidden;
   flex: none;
   width: calc(var(--w) * 0.74);
-  height: calc(var(--w) * 0.52);
+  height: calc(var(--w) * 0.70);
   margin-left: calc(var(--w) * 0.13);
   border-radius: calc(var(--w) * 0.014);
   background: #14100e;
