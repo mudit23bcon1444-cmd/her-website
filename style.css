@@ -1,0 +1,436 @@
+/* ============================================================
+   HEARTBREAK REEL – style.css  (v2 – fixed film-reel layering)
+   Mobile-first, no external dependencies (except Google Fonts)
+   ============================================================ */
+
+/* ── 0. Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-dark:       #0a0408;
+  --bg-maroon:     #1a0610;
+  --heart-red:     #c0392b;
+  --heart-glow:    #ff4060;
+  --gold:          #d4a853;
+  --cream:         #f5e6d3;
+  --font-serif:    'Playfair Display', Georgia, serif;
+  --font-sans:     'Inter', system-ui, sans-serif;
+  --strip-w:       min(78vw, 420px);           /* mobile */
+  --strip-w-desk:  min(36vw, 460px);           /* desktop ≥900px */
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg-dark);
+  color: var(--cream);
+  font-family: var(--font-sans);
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── 1. Loader ── */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1.2rem;
+  background: radial-gradient(ellipse at center, #200810 0%, #0a0408 100%);
+  transition: opacity 0.8s ease;
+}
+#loader.hidden { opacity: 0; pointer-events: none; }
+
+.loader-heart {
+  font-size: 3rem; color: var(--heart-red);
+  animation: heartPulse 1s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px var(--heart-glow));
+}
+
+.loader-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: #a07070;
+  letter-spacing: 0.1em;
+}
+
+.loader-bar {
+  width: 200px; height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px; overflow: hidden;
+}
+.loader-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--heart-red), var(--gold));
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* ── 2. Mute button ── */
+.mute-btn {
+  position: fixed; top: 1rem; right: 1rem; z-index: 800;
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: background 0.25s, transform 0.2s;
+}
+.mute-btn:hover  { background: rgba(255,255,255,0.15); transform: scale(1.1); }
+.mute-btn svg    { width: 20px; height: 20px; }
+
+/* ── 3. Scenes ── */
+.scene {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.scene.active { opacity: 1; pointer-events: all; }
+
+/* ── 4. Scene 1 background ── */
+#scene1 {
+  background: radial-gradient(ellipse 80% 60% at 50% 40%,
+    #2d0a1a 0%, #130208 50%, #0a0408 100%);
+  overflow: hidden;
+}
+
+/* ── 5. Dust canvas ── */
+#dustCanvas {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── 6. Archer ── */
+.archer {
+  position: absolute;
+  bottom: 10%; left: 4%;
+  width: clamp(80px, 18vw, 160px);
+  z-index: 10;
+  transform-origin: center bottom;
+  animation: breathe 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.8));
+}
+.archer svg { width: 100%; height: auto; }
+.archer img { width: 100%; height: auto; }
+
+/* ── 7. Heart ── */
+.heart-container {
+  position: relative; z-index: 20;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+
+.heart-svg {
+  width: clamp(160px, 48vw, 340px);
+  height: auto;
+  filter: drop-shadow(0 0 40px rgba(192,57,43,0.7))
+          drop-shadow(0 0 80px rgba(192,57,43,0.3));
+  animation: heartBeat 1.6s ease-in-out infinite;
+}
+
+.click-me-btn {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  padding: 0.55em 1.4em;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  color: #fff;
+  background: rgba(180,40,60,0.45);
+  border: 1.5px solid rgba(255,120,120,0.5);
+  border-radius: 50px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(6px);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  animation: btnPulse 2s ease-in-out infinite;
+  white-space: nowrap;
+}
+.click-me-btn:hover {
+  background: rgba(200,50,70,0.7);
+  box-shadow: 0 0 20px rgba(255,80,100,0.6);
+  transform: translate(-50%,-50%) scale(1.06);
+}
+.click-me-btn:active { transform: translate(-50%,-50%) scale(0.96); }
+
+/* ── 8. Flying arrow ── */
+.arrow-projectile {
+  position: absolute;
+  width: 80px; height: 12px;
+  z-index: 30;
+  display: none;
+  transform-origin: left center;
+}
+.arrow-projectile svg { width: 100%; height: 100%; }
+
+/* ── 9. Heart shards ── */
+.shard {
+  position: absolute;
+  z-index: 25;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* ── 10. Flash overlay ── */
+.flash-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: #fff;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.08s ease;
+}
+.flash-overlay.flash-in  { opacity: 0.92; }
+.flash-overlay.flash-out { opacity: 0; transition: opacity 0.4s ease; }
+
+/* ── 11. Screen shake ── */
+@keyframes screenShake {
+  0%   { transform: translate(0,0) rotate(0deg); }
+  15%  { transform: translate(-6px, 4px) rotate(-1deg); }
+  30%  { transform: translate(6px,-4px) rotate(1deg); }
+  45%  { transform: translate(-5px, 3px) rotate(-0.5deg); }
+  60%  { transform: translate(5px,-3px) rotate(0.5deg); }
+  75%  { transform: translate(-3px, 2px) rotate(0deg); }
+  90%  { transform: translate(3px,-2px); }
+  100% { transform: translate(0,0); }
+}
+.screen-shake { animation: screenShake 0.5s ease; }
+
+/* ══════════════════════════════════════════════════════════
+   SCENE 3 – REVEAL
+   ══════════════════════════════════════════════════════════ */
+#scene3 {
+  background: radial-gradient(ellipse 100% 100% at 50% 50%,
+    #1a0610 0%, #0a0408 100%);
+  /* Mobile: column layout – message top, reel below */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.8rem;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+/* ── Message wrap ── */
+.message-wrap {
+  position: relative; z-index: 30;
+  text-align: center;
+  max-width: min(520px, 90vw);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  flex-shrink: 0;
+  padding: 0 0.5rem;
+}
+.message-wrap.visible { opacity: 1; }
+
+.typed-message {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 3.5vw, 1.6rem);
+  line-height: 1.65;
+  color: var(--cream);
+  text-shadow: 0 0 20px rgba(255,150,150,0.4);
+  letter-spacing: 0.02em;
+}
+
+.cursor-blink {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 1.2em;
+  color: var(--heart-red);
+  animation: cursorBlink 0.8s step-end infinite;
+  margin-left: 2px;
+}
+.cursor-blink.hidden { display: none; }
+
+/* ══════════════════════════════════════════════════════════
+   FILM REEL
+   ══════════════════════════════════════════════════════════ */
+
+/* Outer container – provides the fade mask and clips overflow */
+.reel-wrap {
+  position: relative;
+  width: var(--strip-w);
+  /* We make it large enough that the rotation never clips corners.
+     Diagonal of the strip ≈ strip-width × 1.07 at 1.5°, so add ~8%. */
+  height: min(52vh, 500px);
+  overflow: hidden;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease 0.3s;
+  /* Fade top & bottom edges */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 10%,
+    #000 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 10%,
+    #000 90%,
+    transparent 100%
+  );
+}
+.reel-wrap.visible { opacity: 1; }
+
+/* Inner rotating container – tilt is applied here so mask stays axis-aligned */
+.reel-rotate {
+  position: absolute;
+  /* Extend beyond parent so corners never clip after rotation */
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
+  /* rotation set inline by JS (max ±1.5°) */
+  transform-origin: center center;
+}
+
+/* Scrolling track inside the rotated container */
+.reel-track {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  will-change: transform;
+}
+
+/* ── One filmstrip segment ── */
+.strip-segment {
+  position: relative;
+  width: 100%;
+  /* height set by JS to maintain the PNG's natural aspect ratio */
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── Photo frames: sit BELOW the PNG overlay (z-index 1) ── */
+.strip-segment .frame {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 4px;
+  /* left / top / width / height set by JS from detected window rects */
+}
+
+.strip-segment .frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.35) contrast(1.05) brightness(0.92);
+}
+
+/* Per-frame grain (inline SVG feTurbulence) at z-index 3 above the photo */
+.strip-segment .frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ── Cleaned filmstrip PNG sits ON TOP of photos (z-index 2) ── */
+.strip-segment .strip-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  /* Ensure PNG is rendered without scaling artefacts */
+  image-rendering: auto;
+}
+
+/* ── 13. Replay button – fixed bottom-centre ── */
+.replay-btn {
+  position: fixed;
+  bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 700;
+  padding: 0.65em 2.2em;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: #fff;
+  background: rgba(120,20,40,0.65);
+  border: 1px solid rgba(255,100,120,0.45);
+  border-radius: 50px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.replay-btn:hover {
+  background: rgba(180,30,60,0.85);
+  box-shadow: 0 4px 24px rgba(200,40,60,0.5);
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* ── 14. Keyframes ── */
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.08); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.05); }
+  70%       { transform: scale(1); }
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255,80,100,0.3); }
+  50%       { box-shadow: 0 0 22px rgba(255,80,100,0.7); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scaleY(1) translateY(0); }
+  50%       { transform: scaleY(1.025) translateY(-4px); }
+}
+
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.2); }
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── 15. Reduced-motion overrides ── */
+@media (prefers-reduced-motion: reduce) {
+  .heart-svg, .click-me-btn, .archer,
+  .loader-heart, .cursor-blink { animation: none !important; }
+  .screen-shake { animation: none !important; }
+  * { transition-duration: 0.01ms !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   TABLET / DESKTOP  ≥ 900px
+   Message left, reel right, never overlapping
+   ══════════════════════════════════════════════════════════ */
+@media (min-width: 900px) {
+  #scene3 {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(2rem, 5vw, 6rem);
+    padding: 2rem 3rem;
+  }
+
+  .message-wrap {
+    text-align: left;
+    max-width: 380px;
+    flex-shrink: 0;
+  }
+
+  .reel-wrap {
+    width: var(--strip-w-desk);
+    height: min(80vh, 680px);
+  }
+}
