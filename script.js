@@ -606,6 +606,13 @@ function startFilmReelScroll() {
     const dt = Math.min((now - lastTimestamp) / 1000, 0.1);
     lastTimestamp = now;
 
+    if (reelUnitH <= 0) {
+      const firstSeg = reelTrack.querySelector('.segment');
+      if (firstSeg && firstSeg.offsetHeight > 0) {
+        reelUnitH = firstSeg.offsetHeight;
+      }
+    }
+
     if (!reelPaused && reelUnitH > 0) {
       const speed = prefersReduced ? (CONFIG.scrollSpeed * 0.25) : CONFIG.scrollSpeed;
       reelScrollY += speed * dt;
