@@ -13,7 +13,6 @@ const CONFIG = {
   /** Array of image paths shown in the film reel (relative to index.html).
    *  Drop photos into assets/images/ and list them here in order. */
   images: [
-    'assets/images/WhatsApp Image 2026-10-11 at 16.18.21.jpeg',
     'assets/images/WhatsApp Image 2026-10-11 at 22.00.57.jpeg',
     'assets/images/WhatsApp Image 2026-10-11 at 22.01.00.jpeg',
     'assets/images/WhatsApp Image 2026-10-11 at 22.01.03.jpeg',
