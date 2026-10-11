@@ -13,7 +13,6 @@ cute-web/
 ├── style.css
 ├── script.js
 ├── assets/
-│   ├── filmstrip.png          ← Film strip with 4 transparent windows (included)
 │   ├── person-with-arrow.png  ← OPTIONAL: your own archer figure; if missing, SVG is used
 │   ├── images/
 │   │   ├── 01.jpg             ← Drop your photos here (any number, any name)

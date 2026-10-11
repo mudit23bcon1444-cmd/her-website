@@ -30,39 +30,27 @@
   <!-- ░░░  SCENE 1 – INTRO  ░░░ -->
   <section id="scene1" class="scene active" aria-label="Intro scene">
 
-    <!-- Dust particles injected by JS -->
     <canvas id="dustCanvas" aria-hidden="true"></canvas>
 
-    <!-- Person with bow figure -->
+    <!-- Person with bow (SVG silhouette) -->
     <div id="archer" class="archer" aria-hidden="true">
-      <!-- SVG fallback – replaced by PNG if person-with-arrow.png found -->
       <svg id="archerSvg" viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg">
-        <!-- Head -->
         <circle cx="60" cy="28" r="18" fill="#c8a882" />
-        <!-- Hair -->
         <ellipse cx="60" cy="14" rx="18" ry="8" fill="#3a1f0d" />
-        <!-- Body -->
         <rect x="44" y="46" width="32" height="70" rx="8" fill="#7a3232" />
-        <!-- Bow arm extends left -->
         <line x1="44" y1="70" x2="10" y2="90" stroke="#c8a882" stroke-width="8" stroke-linecap="round" />
-        <!-- Draw arm pulled back -->
         <line x1="76" y1="70" x2="105" y2="55" stroke="#c8a882" stroke-width="8" stroke-linecap="round" />
-        <!-- Legs -->
         <rect x="46" y="116" width="12" height="70" rx="6" fill="#3a1f0d" />
         <rect x="62" y="116" width="12" height="70" rx="6" fill="#3a1f0d" />
-        <!-- Bow (curved arc) -->
         <path d="M8 60 Q-10 90 8 120" fill="none" stroke="#8B5E3C" stroke-width="5" stroke-linecap="round"/>
-        <!-- Bowstring -->
         <line x1="8" y1="60" x2="10" y2="90" stroke="#e8d5b0" stroke-width="1.5"/>
         <line x1="10" y1="90" x2="8" y2="120" stroke="#e8d5b0" stroke-width="1.5"/>
-        <!-- Arrow nocked (hidden when arrow flies) -->
         <line id="nockArrow" x1="10" y1="90" x2="100" y2="58" stroke="#8B5E3C" stroke-width="3" stroke-linecap="round"/>
-        <!-- Arrow head -->
         <polygon id="nockArrowHead" points="100,58 92,54 92,62" fill="#c0392b"/>
       </svg>
     </div>
 
-    <!-- Heart container -->
+    <!-- Glowing heart -->
     <div id="heartContainer" class="heart-container" aria-label="Click to begin">
       <svg id="heartSvg" class="heart-svg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
@@ -80,18 +68,16 @@
           d="M100,155 C60,120 10,90 10,55 C10,25 35,10 65,20 C80,25 100,40 100,40
              C100,40 120,25 135,20 C165,10 190,25 190,55 C190,90 140,120 100,155 Z"
           fill="url(#heartGrad)" filter="url(#heartGlow)" />
-        <!-- Crack lines (hidden until break) -->
         <g id="crackGroup" opacity="0">
           <polyline points="100,50 95,80 108,100 98,130" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
           <polyline points="100,50 85,65 75,85" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
           <polyline points="108,100 120,95 130,110" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
         </g>
       </svg>
-
       <button id="clickMeBtn" class="click-me-btn" aria-label="Begin the reel">Click me</button>
     </div>
 
-    <!-- Arrow projectile (animated separately via JS) -->
+    <!-- Arrow projectile -->
     <div id="arrow" class="arrow-projectile" aria-hidden="true">
       <svg viewBox="0 0 80 12" xmlns="http://www.w3.org/2000/svg">
         <line x1="0" y1="6" x2="64" y2="6" stroke="#8B5E3C" stroke-width="3"/>
@@ -102,30 +88,29 @@
 
   </section>
 
-  <!-- ░░░  WHITE FLASH overlay  ░░░ -->
+  <!-- ░░░  WHITE FLASH  ░░░ -->
   <div id="flashOverlay" class="flash-overlay" aria-hidden="true"></div>
 
   <!-- ░░░  SCENE 3 – REVEAL  ░░░ -->
   <section id="scene3" class="scene" aria-label="Reveal scene" hidden>
 
-    <!-- Typed message -->
+    <!-- Typewriter message -->
     <div id="messageWrap" class="message-wrap" aria-live="polite">
       <p id="typedMessage" class="typed-message"></p>
       <span class="cursor-blink" aria-hidden="true">|</span>
     </div>
 
-    <!-- Film reel wrapper: outer div provides the fade-mask clip -->
+    <!-- Film reel: outer clip → rotate wrapper → scrolling filmstrip -->
     <div id="reelWrap" class="reel-wrap" aria-label="Photo film reel">
-      <!-- Inner rotation wrapper (tilt applied here so mask stays axis-aligned) -->
       <div id="reelRotate" class="reel-rotate">
-        <!-- Scrolling track (built by JS): strip-segment divs go here -->
-        <div id="reelTrack" class="reel-track"></div>
+        <!-- .filmstrip is built entirely by JS as pure CSS/HTML elements -->
+        <div id="reelTrack" class="filmstrip"></div>
       </div>
     </div>
 
   </section>
 
-  <!-- Replay button: fixed bottom-centre, outside scene3 so safe-area works -->
+  <!-- Replay button – fixed, outside scene3 for safe-area support -->
   <button id="replayBtn" class="replay-btn" hidden aria-label="Replay from the beginning">↺ Replay</button>
 
   <script src="script.js"></script>

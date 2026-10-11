@@ -1,26 +1,40 @@
 /* ============================================================
-   HEARTBREAK REEL – style.css  (v2 – fixed film-reel layering)
-   Mobile-first, no external dependencies (except Google Fonts)
+   HEARTBREAK REEL – style.css
+   Pure CSS 35mm film strip replica + Cinematic Heartbreak
+   Mobile-first, no external frameworks or build step.
    ============================================================ */
 
-/* ── 0. Reset & base ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── 0. Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 :root {
-  --bg-dark:       #0a0408;
-  --bg-maroon:     #1a0610;
-  --heart-red:     #c0392b;
-  --heart-glow:    #ff4060;
-  --gold:          #d4a853;
-  --cream:         #f5e6d3;
-  --font-serif:    'Playfair Display', Georgia, serif;
-  --font-sans:     'Inter', system-ui, sans-serif;
-  --strip-w:       min(78vw, 420px);           /* mobile */
-  --strip-w-desk:  min(36vw, 460px);           /* desktop ≥900px */
+  --bg-dark:          #0a0408;
+  --bg-maroon:        #1a0610;
+  --heart-red:        #c0392b;
+  --heart-glow:       #ff4060;
+  --gold:             #d4a853;
+  --cream:            #f5e6d3;
+  --font-serif:       'Playfair Display', Georgia, serif;
+  --font-sans:        'Inter', system-ui, sans-serif;
+
+  /* 35mm Film Strip Geometry (Mobile-first default) */
+  --w:                min(78vw, 420px);
+  --object-position:  center 30%;
+}
+
+@media (min-width: 900px) {
+  :root {
+    --w: min(36vw, 460px);
+  }
 }
 
 html, body {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: var(--bg-dark);
   color: var(--cream);
@@ -31,16 +45,26 @@ html, body {
 
 /* ── 1. Loader ── */
 #loader {
-  position: fixed; inset: 0; z-index: 9999;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1.2rem;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
   background: radial-gradient(ellipse at center, #200810 0%, #0a0408 100%);
   transition: opacity 0.8s ease;
 }
-#loader.hidden { opacity: 0; pointer-events: none; }
+
+#loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
 .loader-heart {
-  font-size: 3rem; color: var(--heart-red);
+  font-size: 3rem;
+  color: var(--heart-red);
   animation: heartPulse 1s ease-in-out infinite;
   filter: drop-shadow(0 0 12px var(--heart-glow));
 }
@@ -54,10 +78,13 @@ html, body {
 }
 
 .loader-bar {
-  width: 200px; height: 3px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px; overflow: hidden;
+  width: 200px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
 }
+
 .loader-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--heart-red), var(--gold));
@@ -65,82 +92,115 @@ html, body {
   transition: width 0.3s ease;
 }
 
-/* ── 2. Mute button ── */
+/* ── 2. Mute Button ── */
 .mute-btn {
-  position: fixed; top: 1rem; right: 1rem; z-index: 800;
-  width: 44px; height: 44px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top, 1rem));
+  right: max(1rem, env(safe-area-inset-right, 1rem));
+  z-index: 800;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50%;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   backdrop-filter: blur(8px);
   transition: background 0.25s, transform 0.2s;
 }
-.mute-btn:hover  { background: rgba(255,255,255,0.15); transform: scale(1.1); }
-.mute-btn svg    { width: 20px; height: 20px; }
 
-/* ── 3. Scenes ── */
+.mute-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
+
+.mute-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ── 3. Scenes Base ── */
 .scene {
-  position: fixed; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
   transition: opacity 0.6s ease;
 }
-.scene.active { opacity: 1; pointer-events: all; }
 
-/* ── 4. Scene 1 background ── */
+.scene.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── 4. Scene 1 – Intro ── */
 #scene1 {
   background: radial-gradient(ellipse 80% 60% at 50% 40%,
     #2d0a1a 0%, #130208 50%, #0a0408 100%);
   overflow: hidden;
 }
 
-/* ── 5. Dust canvas ── */
+/* Dust particles canvas */
 #dustCanvas {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 0;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ── 6. Archer ── */
+/* Archer silhouette */
 .archer {
   position: absolute;
-  bottom: 10%; left: 4%;
+  bottom: 10%;
+  left: 4%;
   width: clamp(80px, 18vw, 160px);
   z-index: 10;
   transform-origin: center bottom;
   animation: breathe 3s ease-in-out infinite;
-  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.8));
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.8));
 }
-.archer svg { width: 100%; height: auto; }
-.archer img { width: 100%; height: auto; }
 
-/* ── 7. Heart ── */
+.archer svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Glowing heart */
 .heart-container {
-  position: relative; z-index: 20;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .heart-svg {
   width: clamp(160px, 48vw, 340px);
   height: auto;
-  filter: drop-shadow(0 0 40px rgba(192,57,43,0.7))
-          drop-shadow(0 0 80px rgba(192,57,43,0.3));
+  filter: drop-shadow(0 0 40px rgba(192, 57, 43, 0.7))
+          drop-shadow(0 0 80px rgba(192, 57, 43, 0.3));
   animation: heartBeat 1.6s ease-in-out infinite;
 }
 
 .click-me-btn {
   position: absolute;
-  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: 0.55em 1.4em;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: clamp(0.85rem, 2.5vw, 1.1rem);
   color: #fff;
-  background: rgba(180,40,60,0.45);
-  border: 1.5px solid rgba(255,120,120,0.5);
+  background: rgba(180, 40, 60, 0.45);
+  border: 1.5px solid rgba(255, 120, 120, 0.5);
   border-radius: 50px;
   cursor: pointer;
   letter-spacing: 0.06em;
@@ -149,24 +209,33 @@ html, body {
   animation: btnPulse 2s ease-in-out infinite;
   white-space: nowrap;
 }
-.click-me-btn:hover {
-  background: rgba(200,50,70,0.7);
-  box-shadow: 0 0 20px rgba(255,80,100,0.6);
-  transform: translate(-50%,-50%) scale(1.06);
-}
-.click-me-btn:active { transform: translate(-50%,-50%) scale(0.96); }
 
-/* ── 8. Flying arrow ── */
+.click-me-btn:hover {
+  background: rgba(200, 50, 70, 0.7);
+  box-shadow: 0 0 20px rgba(255, 80, 100, 0.6);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.click-me-btn:active {
+  transform: translate(-50%, -50%) scale(0.96);
+}
+
+/* Flying arrow projectile */
 .arrow-projectile {
   position: absolute;
-  width: 80px; height: 12px;
+  width: 80px;
+  height: 12px;
   z-index: 30;
   display: none;
   transform-origin: left center;
 }
-.arrow-projectile svg { width: 100%; height: 100%; }
 
-/* ── 9. Heart shards ── */
+.arrow-projectile svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Heart burst shards */
 .shard {
   position: absolute;
   z-index: 25;
@@ -174,62 +243,79 @@ html, body {
   will-change: transform, opacity;
 }
 
-/* ── 10. Flash overlay ── */
+/* White flash overlay */
 .flash-overlay {
-  position: fixed; inset: 0; z-index: 500;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
   background: #fff;
-  opacity: 0; pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
   transition: opacity 0.08s ease;
 }
-.flash-overlay.flash-in  { opacity: 0.92; }
-.flash-overlay.flash-out { opacity: 0; transition: opacity 0.4s ease; }
 
-/* ── 11. Screen shake ── */
-@keyframes screenShake {
-  0%   { transform: translate(0,0) rotate(0deg); }
-  15%  { transform: translate(-6px, 4px) rotate(-1deg); }
-  30%  { transform: translate(6px,-4px) rotate(1deg); }
-  45%  { transform: translate(-5px, 3px) rotate(-0.5deg); }
-  60%  { transform: translate(5px,-3px) rotate(0.5deg); }
-  75%  { transform: translate(-3px, 2px) rotate(0deg); }
-  90%  { transform: translate(3px,-2px); }
-  100% { transform: translate(0,0); }
+.flash-overlay.flash-in {
+  opacity: 0.92;
 }
-.screen-shake { animation: screenShake 0.5s ease; }
+
+.flash-overlay.flash-out {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Screen shake effect */
+@keyframes screenShake {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  15%  { transform: translate(-6px, 4px) rotate(-1deg); }
+  30%  { transform: translate(6px, -4px) rotate(1deg); }
+  45%  { transform: translate(-5px, 3px) rotate(-0.5deg); }
+  60%  { transform: translate(5px, -3px) rotate(0.5deg); }
+  75%  { transform: translate(-3px, 2px) rotate(0deg); }
+  90%  { transform: translate(3px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+
+.screen-shake {
+  animation: screenShake 0.5s ease;
+}
 
 /* ══════════════════════════════════════════════════════════
-   SCENE 3 – REVEAL
+   SCENE 3 – REVEAL & FILM REEL
    ══════════════════════════════════════════════════════════ */
 #scene3 {
   background: radial-gradient(ellipse 100% 100% at 50% 50%,
     #1a0610 0%, #0a0408 100%);
-  /* Mobile: column layout – message top, reel below */
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 1.8rem;
-  padding: 1rem;
+  justify-content: flex-start;
+  padding: max(1.2rem, env(safe-area-inset-top, 1.2rem)) 1rem 1rem;
   overflow: hidden;
 }
 
-/* ── Message wrap ── */
+/* ── Typewriter Message ── */
 .message-wrap {
-  position: relative; z-index: 30;
+  position: relative;
+  z-index: 30;
   text-align: center;
-  max-width: min(520px, 90vw);
+  max-width: min(520px, 92vw);
   opacity: 0;
   transition: opacity 0.8s ease;
   flex-shrink: 0;
+  margin-bottom: 0.8rem;
   padding: 0 0.5rem;
 }
-.message-wrap.visible { opacity: 1; }
+
+.message-wrap.visible {
+  opacity: 1;
+}
 
 .typed-message {
   font-family: var(--font-serif);
-  font-size: clamp(1rem, 3.5vw, 1.6rem);
-  line-height: 1.65;
+  font-size: clamp(0.95rem, 3.2vw, 1.45rem);
+  line-height: 1.6;
   color: var(--cream);
-  text-shadow: 0 0 20px rgba(255,150,150,0.4);
+  text-shadow: 0 0 20px rgba(255, 150, 150, 0.4);
   letter-spacing: 0.02em;
 }
 
@@ -241,113 +327,186 @@ html, body {
   animation: cursorBlink 0.8s step-end infinite;
   margin-left: 2px;
 }
-.cursor-blink.hidden { display: none; }
 
-/* ══════════════════════════════════════════════════════════
-   FILM REEL
-   ══════════════════════════════════════════════════════════ */
+.cursor-blink.hidden {
+  display: none;
+}
 
-/* Outer container – provides the fade mask and clips overflow */
+/* ── Pure CSS 35mm Film Strip Container ── */
 .reel-wrap {
   position: relative;
-  width: var(--strip-w);
-  /* We make it large enough that the rotation never clips corners.
-     Diagonal of the strip ≈ strip-width × 1.07 at 1.5°, so add ~8%. */
-  height: min(52vh, 500px);
+  /* Extra width padding so the 1deg rotation never clips */
+  width: calc(var(--w) + 40px);
+  padding: 0 20px;
+  height: 100vh;
+  max-height: 100%;
+  flex: 1;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   flex-shrink: 0;
   opacity: 0;
   transition: opacity 1.2s ease 0.3s;
-  /* Fade top & bottom edges */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    #000 10%,
-    #000 90%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    #000 10%,
-    #000 90%,
-    transparent 100%
-  );
+  cursor: grab;
+  /* Mask gradient for smooth top & bottom fade */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
 }
-.reel-wrap.visible { opacity: 1; }
 
-/* Inner rotating container – tilt is applied here so mask stays axis-aligned */
+.reel-wrap:active {
+  cursor: grabbing;
+}
+
+.reel-wrap.visible {
+  opacity: 1;
+}
+
+/* Slight 1deg rotation wrapper */
 .reel-rotate {
-  position: absolute;
-  /* Extend beyond parent so corners never clip after rotation */
-  top: -5%;
-  left: -5%;
-  width: 110%;
-  height: 110%;
-  /* rotation set inline by JS (max ±1.5°) */
+  position: relative;
+  width: var(--w);
+  height: 100%;
+  transform: rotate(1deg);
   transform-origin: center center;
 }
 
-/* Scrolling track inside the rotated container */
-.reel-track {
+/* Filmstrip stack (scrolling via JS requestAnimationFrame) */
+.filmstrip {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%;
+  top: 0;
+  left: 0;
+  width: var(--w);
   will-change: transform;
+  border-radius: calc(var(--w) * 0.006);
 }
 
-/* ── One filmstrip segment ── */
-.strip-segment {
+/* ── Single Film Segment (4 photo frames per segment) ──
+   Height: calc(var(--w) * 2.34)
+   Padding-top & bottom: calc(var(--w) * 0.0325)
+   Body: continuous with ZERO gap between stacked segments
+*/
+.segment {
   position: relative;
-  width: 100%;
-  /* height set by JS to maintain the PNG's natural aspect ratio */
-  display: block;
+  width: var(--w);
+  height: calc(var(--w) * 2.34);
+  background-color: #2a2321;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  padding-top: calc(var(--w) * 0.0325);
+  padding-bottom: calc(var(--w) * 0.0325);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+/* ── Sprocket Holes ──
+   Two columns, absolute, height 100%, flex column space-around
+   17 holes per column, opaque off-white #f3eee4
+*/
+.holes {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.holes.left {
+  left: calc(var(--w) * 0.056);
+}
+
+.holes.right {
+  right: calc(var(--w) * 0.056);
+}
+
+.hole {
+  width: calc(var(--w) * 0.085);
+  height: calc(var(--w) * 0.06);
+  border-radius: calc(var(--w) * 0.014);
+  background: #f3eee4;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.28);
   flex-shrink: 0;
 }
 
-/* ── Photo frames: sit BELOW the PNG overlay (z-index 1) ── */
-.strip-segment .frame {
+/* ── Edge Markings / Print ──
+   Tiny gold (#d9a93a) text next to the windows: "▶ 2A", "3", "▶ 3A", "4"
+*/
+.edge-mark {
   position: absolute;
-  z-index: 1;
-  overflow: hidden;
-  border-radius: 4px;
-  /* left / top / width / height set by JS from detected window rects */
+  color: #d9a93a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: calc(var(--w) * 0.035);
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 6;
+  line-height: 1;
+  user-select: none;
+  opacity: 0.9;
+  letter-spacing: 0.02em;
 }
 
-.strip-segment .frame img {
+.edge-mark.left {
+  left: calc(var(--w) * 0.008);
+}
+
+.edge-mark.right {
+  right: calc(var(--w) * 0.008);
+  text-align: right;
+}
+
+/* ── Photo Frames ──
+   Width: calc(var(--w) * 0.695)
+   Height: calc(var(--w) * 0.52)
+   Left offset: calc(var(--w) * 0.15)
+   Border-radius: calc(var(--w) * 0.012)
+*/
+.frame {
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  width: calc(var(--w) * 0.695);
+  height: calc(var(--w) * 0.52);
+  margin-left: calc(var(--w) * 0.15);
+  border-radius: calc(var(--w) * 0.012);
+  background: #14100e;
+}
+
+/* Image inside window: object-fit cover, sepia/contrast filter, positionable */
+.frame img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: var(--object-position, center 30%);
   display: block;
-  filter: sepia(0.35) contrast(1.05) brightness(0.92);
+  filter: sepia(0.3) contrast(1.05) brightness(0.96);
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-/* Per-frame grain (inline SVG feTurbulence) at z-index 3 above the photo */
-.strip-segment .frame::after {
+/* Inset shadow & faint film grain overlay clipped to frame */
+.frame::after {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 3;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-  opacity: 0.35;
-  mix-blend-mode: overlay;
   pointer-events: none;
-}
-
-/* ── Cleaned filmstrip PNG sits ON TOP of photos (z-index 2) ── */
-.strip-segment .strip-overlay {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   z-index: 2;
-  pointer-events: none;
-  /* Ensure PNG is rendered without scaling artefacts */
-  image-rendering: auto;
+  border-radius: inherit;
+  box-shadow: inset 0 0 calc(var(--w) * 0.02) rgba(0, 0, 0, 0.55);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='fg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23fg)' opacity='0.08'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
 }
 
-/* ── 13. Replay button – fixed bottom-centre ── */
+/* ── Replay Button ── */
 .replay-btn {
   position: fixed;
   bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
@@ -358,8 +517,8 @@ html, body {
   font-family: var(--font-serif);
   font-size: 1rem;
   color: #fff;
-  background: rgba(120,20,40,0.65);
-  border: 1px solid rgba(255,100,120,0.45);
+  background: rgba(120, 20, 40, 0.65);
+  border: 1px solid rgba(255, 100, 120, 0.45);
   border-radius: 50px;
   cursor: pointer;
   backdrop-filter: blur(10px);
@@ -367,13 +526,14 @@ html, body {
   letter-spacing: 0.08em;
   white-space: nowrap;
 }
+
 .replay-btn:hover {
-  background: rgba(180,30,60,0.85);
-  box-shadow: 0 4px 24px rgba(200,40,60,0.5);
+  background: rgba(180, 30, 60, 0.85);
+  box-shadow: 0 4px 24px rgba(200, 40, 60, 0.5);
   transform: translateX(-50%) scale(1.05);
 }
 
-/* ── 14. Keyframes ── */
+/* ── Keyframe Animations ── */
 @keyframes heartBeat {
   0%, 100% { transform: scale(1); }
   14%       { transform: scale(1.08); }
@@ -383,8 +543,8 @@ html, body {
 }
 
 @keyframes btnPulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(255,80,100,0.3); }
-  50%       { box-shadow: 0 0 22px rgba(255,80,100,0.7); }
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 80, 100, 0.3); }
+  50%       { box-shadow: 0 0 22px rgba(255, 80, 100, 0.7); }
 }
 
 @keyframes breathe {
@@ -402,35 +562,38 @@ html, body {
   50%       { opacity: 0; }
 }
 
-/* ── 15. Reduced-motion overrides ── */
-@media (prefers-reduced-motion: reduce) {
-  .heart-svg, .click-me-btn, .archer,
-  .loader-heart, .cursor-blink { animation: none !important; }
-  .screen-shake { animation: none !important; }
-  * { transition-duration: 0.01ms !important; }
-}
-
-/* ══════════════════════════════════════════════════════════
-   TABLET / DESKTOP  ≥ 900px
-   Message left, reel right, never overlapping
-   ══════════════════════════════════════════════════════════ */
+/* ── Desktop Layout ≥ 900px: Message Left, Reel Right ── */
 @media (min-width: 900px) {
   #scene3 {
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: clamp(2rem, 5vw, 6rem);
-    padding: 2rem 3rem;
+    padding: 0 3rem;
   }
 
   .message-wrap {
     text-align: left;
     max-width: 380px;
-    flex-shrink: 0;
+    margin-bottom: 0;
   }
 
   .reel-wrap {
-    width: var(--strip-w-desk);
-    height: min(80vh, 680px);
+    flex: none;
+    height: 100vh;
+  }
+}
+
+/* ── Reduced Motion Overrides ── */
+@media (prefers-reduced-motion: reduce) {
+  .heart-svg, .click-me-btn, .archer,
+  .loader-heart, .cursor-blink {
+    animation: none !important;
+  }
+  .screen-shake {
+    animation: none !important;
+  }
+  * {
+    transition-duration: 0.01ms !important;
   }
 }
